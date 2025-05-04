@@ -31,5 +31,7 @@ const movieSchema = new mongoose.Schema({
     rating: { type: Number, min: 0, max: 10 },
 });
 
+
+
 const Movie = mongoose.model('Movie', movieSchema);
 export  {Actor,Producer,Movie};
