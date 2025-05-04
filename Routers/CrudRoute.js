@@ -3,7 +3,7 @@ import { addMovie, deleteMovie, getAllMovies, updateMovie, getMovieById, verifyT
 
 const router = express.Router();
 
-router.post('/create', addMovie);
+router.post('/create',verifyToken, addMovie);
 router.get('/getallmovie',verifyToken, getAllMovies);
 router.get('/getMovieById/:id', getMovieById);
 router.put('/updated/:id', updateMovie);
