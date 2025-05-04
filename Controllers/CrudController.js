@@ -81,10 +81,17 @@ export const addMovie = async (req, res) => {
     }
   };
   export const getMovieById = async (req, res) => {
+    const { id } = req.params;
+  
+    // ✅ Validate ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid movie ID" });
+    }
+  
     try {
-      const movie = await Movie.findById(req.params.id)
-      .populate("producer","name")
-      .populate("actors","name");
+      const movie = await Movie.findById(id)
+        .populate("producer", "name")
+        .populate("actors", "name");
   
       if (!movie) {
         return res.status(404).json({ message: "Movie not found" });
@@ -139,5 +146,22 @@ export const deleteMovie = async (req, res) => {
     res.status(200).json({ message: "Movie deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+
+import jwt from "jsonwebtoken";
+
+export const verifyToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) return res.status(401).json({ message: "Unauthorized" });
+
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // attach user info to request
+    next();
+  } catch (err) {
+    return res.status(403).json({ message: "Invalid token" });
   }
 };
